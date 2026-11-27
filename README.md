@@ -76,8 +76,16 @@ Pour chaque modèle, 12 points correspondent à l'épreuve de fin de séquence. 
 
 Les descripteurs des degrés sont des propositions. Dans les intitulés officiels, le mot « mobile » a été remplacé par « thème d'entraînement ». Tout se modifie dans Piliers & maîtrise → Évaluation de fin de cycle → Grille d'évaluation.
 
+## Nouveautés version 1.1
+- **Anciens iPad** : le code est converti pour Safari 11 et plus (iOS 11 à 15), avec les fonctions récentes ajoutées si elles manquent.
+- **Classes & élèves** : date de naissance (âge et FC max calculés), FC de repos, FC max mesurée, test de Ruffier-Dickson facultatif. Import CSV : colonnes `Naissance` et `FC repos` reconnues.
+- **Demi-Cooper** : saisie en *tours + plots* (par défaut) ou au plot d'arrêt numéroté ; l'affichage indique toujours tours et plots.
+- **Veille** : l'écran reste allumé tant qu'un chrono tourne (Wake Lock, ou vidéo muette sur iPad) ; les chronos des tests suivent l'horloge réelle.
+- **Modèles de course** : enregistrer une course comme modèle, créer une course depuis un modèle ; dans la Séquence, ajouter une course depuis un modèle et revenir la modifier.
+- **Luc Léger** : protocole test 6e ou Léger 1988, bips calés sur l'horloge audio, annonce vocale du palier, import de la bande son officielle, tableau d'équivalences (navettes, distance, VO2max, demi-Cooper).
+
 ## Mise à jour
-Remplacez les fichiers, puis changez `VERSION` dans `sw.js` (par exemple `course-duree-v3`). Les données sont conservées.
+Remplacez les fichiers, puis changez `VERSION` dans `sw.js` (par exemple `course-duree-v5`). Les données sont conservées.
 
 ## Crédits
 Certaines idées pédagogiques (tests VMA, Bats tes perfs, fractionnés, course d'équipe, pelotons et jokers) s'inspirent de l'application « Demi-fond N'EPS » de Quentin Delisle.
