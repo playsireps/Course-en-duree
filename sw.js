@@ -1,6 +1,6 @@
 /* Service worker – CA5 Course en durée – N'EPS numérique – Emilie BIDAULT et Quentin DELISLE
    L'application fonctionne hors connexion. */
-const VERSION = "course-duree-v4";
+const VERSION = "course-duree-v5";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/icon-180.png", "./lib/zxing-reader.js", "./lib/zxing_reader.wasm"];
 

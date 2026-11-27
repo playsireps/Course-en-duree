@@ -76,6 +76,13 @@ Pour chaque modèle, 12 points correspondent à l'épreuve de fin de séquence. 
 
 Les descripteurs des degrés sont des propositions. Dans les intitulés officiels, le mot « mobile » a été remplacé par « thème d'entraînement ». Tout se modifie dans Piliers & maîtrise → Évaluation de fin de cycle → Grille d'évaluation.
 
+## Nouveautés version 1.2
+- Écran de course (élève et enseignant) : plus de liste des courses, un simple menu déroulant « ⏱ Course ».
+- Courses de départ : deux courses modèles (continue 2 × 12 min, fractionnée 6 × 3 min) et les trois épreuves ; les leçons proposées sont retirées (une course déjà saisie dans une vraie classe est conservée).
+- Les modèles de course sont sous les réglages de la course.
+- L'allure selon le thème d'entraînement se coche dans les réglages de chaque course (bloc « Pendant la course »), et n'est plus dans 🎯 Thèmes.
+- Anciens iPad : fenêtres (code enseignant…) et espacements corrigés pour Safari 11 à 14.
+
 ## Nouveautés version 1.1
 - **Anciens iPad** : le code est converti pour Safari 11 et plus (iOS 11 à 15), avec les fonctions récentes ajoutées si elles manquent.
 - **Classes & élèves** : date de naissance (âge et FC max calculés), FC de repos, FC max mesurée, test de Ruffier-Dickson facultatif. Import CSV : colonnes `Naissance` et `FC repos` reconnues.
@@ -85,7 +92,7 @@ Les descripteurs des degrés sont des propositions. Dans les intitulés officiel
 - **Luc Léger** : protocole test 6e ou Léger 1988, bips calés sur l'horloge audio, annonce vocale du palier, import de la bande son officielle, tableau d'équivalences (navettes, distance, VO2max, demi-Cooper).
 
 ## Mise à jour
-Remplacez les fichiers, puis changez `VERSION` dans `sw.js` (par exemple `course-duree-v5`). Les données sont conservées.
+Remplacez les fichiers, puis changez `VERSION` dans `sw.js` (par exemple `course-duree-v6`). Les données sont conservées.
 
 ## Crédits
 Certaines idées pédagogiques (tests VMA, Bats tes perfs, fractionnés, course d'équipe, pelotons et jokers) s'inspirent de l'application « Demi-fond N'EPS » de Quentin Delisle.
