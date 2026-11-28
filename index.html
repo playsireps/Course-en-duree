@@ -947,6 +947,11 @@ input.c5-date{min-width:138px}
 .c5-pcr select{max-width:340px}
 .modal.c5-wide{max-width:min(1100px,96vw)!important;width:96vw}
 .modal.c5-wide table td,.modal.c5-wide table th{padding:5px 8px}
+.c5-srt{display:inline-flex;align-items:center;grid-gap:6px;gap:6px;margin-right:8px}
+.c5-srt select{min-width:150px}
+.c5-who h3{margin:0}
+.c5-who .fo-grid{margin-top:6px}
+.c5lap .c5lap-n{cursor:default}
 
 
 .modal-bg{top:0;right:0;bottom:0;left:0;-webkit-overflow-scrolling:touch}
@@ -971,7 +976,7 @@ input.c5-date{min-width:138px}
 <div id="cdOverlay" class="cd-overlay" hidden></div>
 <div id="soBoard" class="so-board" hidden></div>
 <div id="signature"><span class="sg-fn">Emilie </span><b>BIDAULT</b> · <span class="sg-fn">Quentin </span><b>DELISLE</b></div>
-<div id="app-version">Version 1.2</div>
+<div id="app-version">Version 1.3</div>
 <div id="modalRoot"></div>
 
 <script src="lib/zxing-reader.js"></script>
@@ -15168,7 +15173,7 @@ function vamAt(t, v0) {
   return { k, v: vamV(k, v0), d, done: k > 0 ? vamV(k - 1, v0) : null };
 }
 function renderTests() {
-  const proto = ui.tProto || "cooper", t = curTest(false), list = sortStudents(runners(), "nom"), sel = ui.tSel || [], pd = coopStep(t), key = "test-" + proto;
+  const proto = ui.tProto || "cooper", t = curTest(false), list = c5TestList(), sel = ui.tSel || [], pd = coopStep(t), key = "test-" + proto;
   const T = xt(key);
   let timer;
   if (proto === "leger") {
@@ -19028,7 +19033,7 @@ function renderEleves() {
     <p class="hint">Décochez « Court » pour un élève absent, dispensé ou observateur : il n'apparaîtra pas dans la grille de course. L'équipe est facultative.</p>${c5EleveOpts()}
     <div class="tablewrap"><table>
       <thead><tr><th>Court</th><th>Nom</th><th>Prénom</th><th>F / G</th><th>Équipe</th><th>VMA (km/h)</th>${c5EleveHead()}<th></th></tr></thead>
-      <tbody>${st.map((s) => {
+      <tbody>${c5SortList(st, LS_KEYS()).map((s) => {
     var _a;
     return `<tr>
         <td><input type="checkbox" id="run-${s.id}" data-field="runs" data-sid="${s.id}" ${s.runs !== false ? "checked" : ""} aria-label="${esc(s.prenom)} court"></td>
@@ -23777,7 +23782,7 @@ document.addEventListener("click", (e) => {
       break;
     }
     case "tSelAll": {
-      const L = runners().map((x) => x.id);
+      const L = (ui.view === "vma" ? c5TestList() : runners()).map((x) => x.id);
       ui.tSel = (ui.tSel || []).length === L.length ? [] : L;
       render();
       break;
@@ -27950,7 +27955,8 @@ function c5ParseDate(v) {
 function c5EleveOpts() {
   const on = !!C5().rufList;
   return `<div class="row c5-lopts"><span class="hint">❤️ Âge et FC max se calculent à partir de la <b>date de naissance</b> (${esc(c5FormulaTxt())}) · touchez la FC max pour saisir une FC max mesurée.</span>
-    <label class="ck"><input type="checkbox" data-action="c5rufList" ${on ? "checked" : ""}> Test de Ruffier-Dickson dans le listing</label></div>`;
+    <label class="ck"><input type="checkbox" data-action="c5rufList" ${on ? "checked" : ""}> Test de Ruffier-Dickson dans le listing</label></div>
+  <div class="row c5-lsort">${c5SortSel("data-c5lsort", LS_KEYS(), 3)}</div>`;
 }
 function c5EleveHead() {
   return `<th>Naissance</th><th class="r">Âge</th><th>FC repos</th><th class="r">FC max</th>${C5().rufList ? "<th>Ruffier-Dickson</th>" : ""}`;
@@ -28041,20 +28047,18 @@ renderTests = function() {
   const m = $("#main"), g = m.querySelector('[data-action="tGuide"]'), mode = coopMode();
   if (g) g.insertAdjacentHTML("beforebegin", `<div class="seg" role="group" aria-label="Saisie du demi-Cooper"><button data-action="coopMode" data-v="tours" aria-pressed="${mode === "tours"}">🔁 Compter tours + plots</button><button data-action="coopMode" data-v="plot" aria-pressed="${mode === "plot"}">📍 Plot d'arrêt numéroté</button></div>`);
   if (mode !== "tours") return;
-  const t = curTest(false), L = coopLap(t), st = coopStep(t), M = coopPerLap(t), sel = ui.tSel || [], T = xt("test-cooper"), list = sortStudents(runners(), "nom");
+  const t = curTest(false), L = coopLap(t), st = coopStep(t), M = coopPerLap(t), sel = ui.tSel || [], T = xt("test-cooper"), list = c5TestList();
   const sec = g && g.closest("section"), hint = sec && Array.from(sec.children).find((x) => x.tagName === "P" && x.classList.contains("hint"));
-  if (hint) hint.innerHTML = `6 minutes pour courir la plus grande distance sur la piste de <b>${L} m</b> (un plot tous les <b>${fmt(st)} m</b>, soit ${M} plots par tour). Pendant le test, touchez <b>＋1 tour</b> à chaque passage d'un coureur sur la ligne de départ. Au signal de fin, ajoutez les <b>plots dépassés après le dernier tour</b> (＋1 plot sur la tuile, ou sélectionnez des coureurs puis le nombre de plots). L'appli calcule la distance et la <b>VMA = distance ÷ 100</b>.`;
+  if (hint) hint.innerHTML = `6 minutes pour courir la plus grande distance sur la piste de <b>${L} m</b> (un plot tous les <b>${fmt(st)} m</b>, soit ${M} plots par tour). Pendant le test, touchez <b>＋1 tour</b> à chaque passage d'un coureur sur la ligne de départ. Au signal de fin, ajoutez les <b>plots dépassés après le dernier tour</b> (＋1 plot sur la tuile). L'appli calcule la distance et la <b>VMA = distance ÷ 100</b>.`;
   const pn = m.querySelector(".t-pn");
-  if (pn) pn.outerHTML = `<div class="t-pn ${sel.length ? "" : "dim"}"><div class="row between"><b>${sel.length ? sel.length + " coureur(s) sélectionné(s) → plots après le dernier tour :" : "Touchez le nom des coureurs pour les sélectionner, puis leurs plots après le dernier tour"}</b>
-      <div class="row"><button class="btn small" data-action="coopSelLap" ${sel.length ? "" : "disabled"}>＋1 tour à la sélection</button><button class="btn small ghost" data-action="tSelAll">Tout / rien</button></div></div>
-    <div class="t-pnb">${Array.from({ length: M }, (_, k) => `<button data-action="coopSelTp" data-k="${k}" ${sel.length ? "" : "disabled"}><b>${k}</b><small>+${fmt(k * st)} m</small></button>`).join("")}</div></div>`;
+  if (pn) pn.remove();
   const tl = m.querySelector(".t-tiles");
   if (tl) {
     tl.classList.add("c5lap-tiles");
     tl.innerHTML = list.map((s) => {
       const r = t && t.res[s.id] || {}, v = testVma(t, s.id), d = testDist(t, s.id), q = r.pn != null ? coopTP(t, r) : { tr: 0, tp: 0 }, prev = s.vma, gn = v != null && prev ? Math.round((v - prev) * 10) / 10 : null;
       return `<div class="t-tile c5lap ${sel.includes(s.id) ? "sel" : ""} ${v != null ? "done" : ""} ${r.ab ? "abd" : ""}" style="--tc:${teamColor(s.equipe)}">
-      <button class="c5lap-n" data-action="tSel" data-sid="${s.id}" aria-pressed="${sel.includes(s.id)}">${esc(s.prenom)} ${esc((s.nom || "")[0] || "")}.</button>
+      <span class="c5lap-n">${esc(s.prenom)} ${esc((s.nom || "")[0] || "")}.</span>
       <span class="c5lap-v">${r.ab ? "🚩 abandon" : `<b>${q.tr}</b> tour${q.tr > 1 ? "s" : ""} + <b>${fmtN(q.tp)}</b> plot${q.tp > 1 ? "s" : ""}`}</span>
       <span class="tt-s">${d != null && !r.ab ? `${d} m · <b>${fmt(v)} km/h</b>` : prev ? "VMA actuelle " + fmt(prev) : "pas de VMA"}${gn != null ? ` · <b class="${gn >= 0 ? "up" : "down"}">${gn >= 0 ? "+" : "−"}${fmt(Math.abs(gn))}</b>` : ""}</span>
       <div class="c5lap-b"><button data-action="coopLap" data-sid="${s.id}" data-d="-1" aria-label="Retirer un tour">−</button><button class="big" data-action="coopLap" data-sid="${s.id}" data-d="1">＋1 tour</button></div>
@@ -28613,6 +28617,186 @@ document.addEventListener("change", (e) => {
   document.body.appendChild(b);
   b.click();
   b.remove();
+});
+const C5_SORTS = [["nom", "Nom"], ["prenom", "Prénom"], ["sexF", "Filles d'abord"], ["sexG", "Garçons d'abord"], ["equipe", "Équipe"], ["vmaD", "VMA décroissante"], ["vmaA", "VMA croissante"], ["ageA", "Âge croissant"], ["ageD", "Âge décroissant"], ["runs", "Coureurs d'abord"], ["noruns", "Non-coureurs d'abord"]];
+function c5Cmp(k) {
+  const num = (f, dir) => (a, b) => {
+    const x = f(a), y = f(b);
+    if (x == null && y == null) return 0;
+    if (x == null) return 1;
+    if (y == null) return -1;
+    return dir * (x - y);
+  };
+  const sx = (w) => (a, b) => (a.sexe === w ? 0 : a.sexe ? 1 : 2) - (b.sexe === w ? 0 : b.sexe ? 1 : 2);
+  switch (k) {
+    case "sexF":
+      return sx("F");
+    case "sexG":
+      return sx("G");
+    case "ageA":
+      return num((s) => {
+        const a = ageOf(s);
+        return a == null ? null : a;
+      }, 1);
+    case "ageD":
+      return num((s) => {
+        const a = ageOf(s);
+        return a == null ? null : a;
+      }, -1);
+    case "runs":
+      return (a, b) => (a.runs === false) - (b.runs === false);
+    case "noruns":
+      return (a, b) => (b.runs === false) - (a.runs === false);
+    default:
+      return cmpKey(k);
+  }
+}
+function c5SortList(list, keys) {
+  const ks = (keys || ["nom"]).filter(Boolean).map(c5Cmp).concat([cmpKey("nom")]);
+  return list.slice().sort((a, b) => {
+    for (const f of ks) {
+      const r = f(a, b);
+      if (r) return r;
+    }
+    return 0;
+  });
+}
+function c5SortSel(attr, keys, n) {
+  keys = keys || [];
+  return Array.from({ length: n }, (_, i) => `<label class="c5-srt"><span class="hint">${i ? "puis" : "Trier par"}</span><select ${attr}="${i}">${i ? `<option value="">—</option>` : ""}${C5_SORTS.map(([k, l]) => `<option value="${k}" ${(keys[i] || (i ? "" : "nom")) === k ? "selected" : ""}>${l}</option>`).join("")}</select></label>`).join("");
+}
+const LS_KEYS = () => S.settings.c5ls = S.settings.c5ls || ["nom", "", ""];
+function TW() {
+  const k = cls();
+  if (!k.c5tw) k.c5tw = { mode: "all", teams: [], ids: [], sort: ["nom", ""] };
+  return k.c5tw;
+}
+function c5TestList() {
+  const w = TW();
+  let L = runners();
+  if (w.mode === "team") L = L.filter((s) => w.teams.includes(teamKey(s.equipe)));
+  else if (w.mode === "libre") L = L.filter((s) => w.ids.includes(s.id));
+  return c5SortList(L, w.sort);
+}
+function c5TestWhoHtml() {
+  const w = TW(), all = sortStudents(runners(), "nom"), teams = classTeams(), n = c5TestList().length;
+  return `<section class="panel c5-who"><div class="row between"><h3>👥 Élèves qui passent le test <span class="chip">${n} / ${all.length}</span></h3>
+      <div class="seg" role="group" aria-label="Élèves du test"><button data-action="c5twMode" data-v="all" aria-pressed="${w.mode === "all"}">Toute la classe</button><button data-action="c5twMode" data-v="team" aria-pressed="${w.mode === "team"}">Par équipe</button><button data-action="c5twMode" data-v="libre" aria-pressed="${w.mode === "libre"}">Choix libre</button></div></div>
+    ${w.mode === "team" ? `<div class="row">${teams.map((t) => `<button class="btn small ${w.teams.includes(t.key) ? "primary" : ""}" data-action="c5twTeam" data-team="${esc(t.key)}" aria-pressed="${w.teams.includes(t.key)}"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${teamColor(t.label)};margin-right:5px"></span>${esc(t.label || t.key || "Sans équipe")}</button>`).join("") || `<span class="hint">Aucune équipe : renseignez-les dans 👥 Classes & élèves.</span>`}</div>` : ""}
+    ${w.mode === "libre" ? `<div class="row"><button class="btn small" data-action="c5twAll">Tous</button><button class="btn small ghost" data-action="c5twNone">Aucun</button></div><div class="fo-grid">${all.map((s) => `<button class="ev-chip ${w.ids.includes(s.id) ? "done" : ""}" aria-pressed="${w.ids.includes(s.id)}" data-action="c5twOne" data-sid="${s.id}" style="--tc:${teamColor(s.equipe)}">${w.ids.includes(s.id) ? "✓ " : ""}${esc(s.prenom)} ${esc((s.nom || "")[0] || "")}.</button>`).join("")}</div>` : ""}
+    <div class="row">${c5SortSel("data-c5tsort", w.sort, 2)}</div></section>`;
+}
+const _c5renderTests2 = renderTests;
+renderTests = function() {
+  _c5renderTests2();
+  const m = $("#main"), tl = m.querySelector(".t-tiles");
+  if (!tl) return;
+  const anchor = m.querySelector(".t-pn") || tl;
+  anchor.insertAdjacentHTML("beforebegin", c5TestWhoHtml());
+  const proto = ui.tProto || "cooper", t = curTest(false), T = xt("test-" + proto);
+  if (t && T.run && proto !== "cooper") tl.querySelectorAll("[data-sid]").forEach((b) => {
+    const r = t.res[b.dataset.sid];
+    if (r && r.ab) {
+      b.dataset.action = "c5tUnAb";
+      b.title = "Absent par erreur ? Touchez pour annuler";
+    }
+  });
+  const ab = m.querySelector('[data-action="tAb"]');
+  if (ab) ab.insertAdjacentHTML("afterend", `<button class="btn small" data-action="c5tReset" ${(ui.tSel || []).length ? "" : "disabled"}>↺ Remettre à zéro (sélection)</button>`);
+  const hb = ab && ab.closest("section");
+  const hp = hb && hb.querySelector("p.hint");
+  if (hp) hp.insertAdjacentHTML("beforeend", " Un élève noté absent ou abandon par erreur : sélectionnez-le puis « ↺ Remettre à zéro »" + (proto !== "cooper" ? ", ou touchez sa tuile 🚩 pendant le test." : "."));
+};
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-action]");
+  if (!el) return;
+  const a = el.dataset.action, rr = () => {
+    const y = scrollY;
+    render();
+    scrollTo(0, y);
+  };
+  const w = () => TW();
+  switch (a) {
+    case "c5twMode": {
+      const W = w();
+      W.mode = el.dataset.v;
+      if (W.mode === "libre" && !W.ids.length) W.ids = runners().map((s) => s.id);
+      ui.tSel = [];
+      persist();
+      rr();
+      break;
+    }
+    case "c5twTeam": {
+      const W = w(), k = el.dataset.team, i = W.teams.indexOf(k);
+      if (i >= 0) W.teams.splice(i, 1);
+      else W.teams.push(k);
+      ui.tSel = [];
+      persist();
+      rr();
+      break;
+    }
+    case "c5twOne": {
+      const W = w(), i = W.ids.indexOf(el.dataset.sid);
+      if (i >= 0) W.ids.splice(i, 1);
+      else W.ids.push(el.dataset.sid);
+      persist();
+      rr();
+      break;
+    }
+    case "c5twAll":
+      w().ids = runners().map((s) => s.id);
+      persist();
+      rr();
+      break;
+    case "c5twNone":
+      w().ids = [];
+      ui.tSel = [];
+      persist();
+      rr();
+      break;
+    case "c5tReset": {
+      const t = curTest(false);
+      if (!t) break;
+      const n = (ui.tSel || []).length;
+      (ui.tSel || []).forEach((id) => {
+        delete t.res[id];
+      });
+      ui.tSel = [];
+      persist();
+      rr();
+      toast(`↺ ${n} élève(s) remis à zéro`);
+      break;
+    }
+    case "c5tUnAb": {
+      const t = curTest(false);
+      if (t && t.res[el.dataset.sid]) {
+        delete t.res[el.dataset.sid];
+        persist();
+        rr();
+        toast("↺ Absence annulée : l'élève court à nouveau");
+      }
+      break;
+    }
+  }
+});
+document.addEventListener("change", (e) => {
+  const t = e.target;
+  if (!t.dataset) return;
+  if (t.dataset.c5tsort != null) {
+    const W = TW();
+    W.sort[+t.dataset.c5tsort] = t.value;
+    persist();
+    const y = scrollY;
+    render();
+    scrollTo(0, y);
+  }
+  if (t.dataset.c5lsort != null) {
+    LS_KEYS()[+t.dataset.c5lsort] = t.value;
+    persist();
+    const y = scrollY;
+    render();
+    scrollTo(0, y);
+  }
 });
 load();
 C5();

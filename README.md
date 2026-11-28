@@ -76,6 +76,12 @@ Pour chaque modèle, 12 points correspondent à l'épreuve de fin de séquence. 
 
 Les descripteurs des degrés sont des propositions. Dans les intitulés officiels, le mot « mobile » a été remplacé par « thème d'entraînement ». Tout se modifie dans Piliers & maîtrise → Évaluation de fin de cycle → Grille d'évaluation.
 
+## Nouveautés version 1.3
+- Classes & élèves : tri de la liste sur 3 critères au choix (nom, prénom, filles ou garçons d'abord, équipe, VMA, âge, coureurs).
+- Tests VMA : choix des élèves qui passent le test (toute la classe, par équipe ou choix libre) et tri sur 2 critères.
+- Demi-Cooper (tours + plots) : l'encadré de sélection des coureurs est retiré.
+- Tous les tests : « ↺ Remettre à zéro (sélection) » ; pendant le Luc Léger, VAMEVAL ou Gacon, toucher la tuile 🚩 d'un élève noté absent par erreur annule l'absence.
+
 ## Nouveautés version 1.2
 - Écran de course (élève et enseignant) : plus de liste des courses, un simple menu déroulant « ⏱ Course ».
 - Courses de départ : deux courses modèles (continue 2 × 12 min, fractionnée 6 × 3 min) et les trois épreuves ; les leçons proposées sont retirées (une course déjà saisie dans une vraie classe est conservée).
@@ -92,7 +98,7 @@ Les descripteurs des degrés sont des propositions. Dans les intitulés officiel
 - **Luc Léger** : protocole test 6e ou Léger 1988, bips calés sur l'horloge audio, annonce vocale du palier, import de la bande son officielle, tableau d'équivalences (navettes, distance, VO2max, demi-Cooper).
 
 ## Mise à jour
-Remplacez les fichiers, puis changez `VERSION` dans `sw.js` (par exemple `course-duree-v6`). Les données sont conservées.
+Remplacez les fichiers, puis changez `VERSION` dans `sw.js` (par exemple `course-duree-v7`). Les données sont conservées.
 
 ## Crédits
 Certaines idées pédagogiques (tests VMA, Bats tes perfs, fractionnés, course d'équipe, pelotons et jokers) s'inspirent de l'application « Demi-fond N'EPS » de Quentin Delisle.
